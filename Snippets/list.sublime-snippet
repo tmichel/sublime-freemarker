@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+<#list ${1:sequence} as ${2:item}>
+	${0}
+</#list>
+]]></content>
+	<tabTrigger>#list</tabTrigger>
+	<scope>text.html.ftl</scope>
+</snippet>

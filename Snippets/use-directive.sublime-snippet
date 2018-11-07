@@ -1,0 +1,7 @@
+<snippet>
+	<content><![CDATA[
+<@${1:name}/>
+]]></content>
+	<tabTrigger>@</tabTrigger>
+	<scope>text.html.ftl</scope>
+</snippet>
