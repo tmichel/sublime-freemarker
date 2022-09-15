@@ -1,0 +1,100 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: HTML (FreeMarker)
+file_extensions:
+  - ftlh
+scope: text.html.ftl
+version: 2
+contexts:
+  main:
+    - match: ''
+      push: 'scope:text.html.basic'
+      with_prototype:
+        - match: '\$\{'
+          scope: punctuation.section.interpolation.begin.ftl
+          push: expr
+        - include: comment
+        - include: tag-start
+        - include: tag-end
+  expr:
+    - meta_scope: meta.interpolation.ftl
+    - include: interpolation-inner
+  comment:
+    - match: '[<\[]#--'
+      captures:
+        0: punctuation.definition.comment.ftl
+      push:
+        - meta_scope: comment.block.ftl
+        - match: '--[>\]]'
+          captures:
+            0: punctuation.definition.comment.ftl
+          pop: true
+  tag-start:
+    - match: '[<\[](#|@)'
+      captures:
+        0: punctuation.definition.tag.begin.ftl
+      push:
+        - meta_scope: meta.tag.ftl
+        - match: '\/?[>\]]'
+          captures:
+            0: punctuation.definition.tag.end.ftl
+          pop: true
+        - match: '(\w+)(=)'
+          captures:
+            1: entity.other.attribute-name.ftl
+            2: punctuation.separator.key-value.ftl
+        - match: '(?<==)\w+'
+          scope: variable.other.ftl
+        - match: '(?<=[#@])\b(assign|attempt|recover|autoesc|compress|escape|noescape|flush|ftl|function|return|global|if|else|elseif|import|include|list|items|sep|break|continue|local|macro|nested|noautoesc|noparse|outputformat|setting|stop|switch|case|default|t|lt|rt|nt)\b'
+          captures:
+            1: entity.name.directive.ftl
+        - match: '(?<=[#@])\w+(\.\w+)*'
+          captures:
+            0: entity.name.directive.ftl
+        - include: comment
+        - include: reserved-words
+        - include: reserved-words-in-directive
+        - include: string-double-quoted
+  tag-end:
+    - match: '([<\[]\/(@|#))(\w+(\.\w+)*)?([>\]])'
+      captures:
+        1: punctuation.definition.tag.begin.ftl
+        3: entity.name.directive.ftl
+        5: punctuation.definition.tag.end.ftl
+  interpolation-inner:
+    - match: '\}'
+      pop: true
+      captures:
+        0: punctuation.section.interpolation.end.ftl
+    - include: string-double-quoted
+    - include: reserved-words
+    - match: '(?<=\$\{)(\.\w+)'
+      captures:
+        1: variable.other.special.ftl
+  string-double-quoted:
+    - match: '"'
+      scope: punctuation.definition.string.begin.ftl
+      push:
+        - meta_scope: string.quoted.double.ftl
+        - match: '\$\{'
+          captures:
+            0: punctuation.section.interpolation.begin.ftl
+          push:
+            - clear_scopes: 1 # clear the string scope
+            - meta_scope: meta.interpolation.ftl
+            - include: interpolation-inner
+        - match: '"'
+          scope: punctuation.definition.string.end.ftl
+          pop: true
+  reserved-words:
+    - match: '\b(true|false)\b'
+      scope: constant.language.ftl
+    - match: '\b(gte?|lte?)\b'
+      scope: keyword.operator.logical.ftl
+    - match: '==|<=?|>=?|!=|!|&&|\|\|'
+      scope: keyword.operator.logical.ftl
+  reserved-words-in-directive:
+    - match: '\b(as|in|using)\b'
+      scope: keyword.other.ftl
+
