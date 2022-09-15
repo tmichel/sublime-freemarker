@@ -6,4 +6,5 @@
 ]]></content>
 	<tabTrigger>#if</tabTrigger>
 	<scope>text.html.ftl</scope>
+	<description>&lt;if&gt;..&lt;/if&gt;</description>
 </snippet>
